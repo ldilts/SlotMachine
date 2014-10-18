@@ -205,17 +205,17 @@ class ViewController: UIViewController {
         self.betOneButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
         self.betOneButton.frame = CGRectMake(self.view.frame.width * kButtonOffsetfromEdge,(self.view.frame.height * kButtonOffsetTop), self.view.frame.width * kButtonSize, self.view.frame.width * kButtonSize)
         // Button setup
-        self.buttonSetup(self.betOneButton, image: "Bet One Button.png", target: "betOneButtonAction:")
+        self.buttonSetup(self.betOneButton, image: "Bet One Button", target: "betOneButtonAction:")
         
         self.betMaxButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
         self.betMaxButton.frame = CGRectMake(self.view.frame.width * kButtonOffsetfromEdge2, (self.view.frame.height * kButtonOffsetTop), self.view.frame.width * kButtonSize, self.view.frame.width * kButtonSize)
         // Button setup
-        self.buttonSetup(self.betMaxButton, image: "Bet Max Button@2x.png", target: "betMaxButtonAction:")
+        self.buttonSetup(self.betMaxButton, image: "Bet Max Button", target: "betMaxButtonAction:")
         
         self.spinButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
         self.spinButton.frame = CGRectMake(self.view.frame.width * kButtonOffsetfromEdge3, (self.view.frame.height * kButtonOffsetTop), self.view.frame.width * kButtonSize, self.view.frame.width * kButtonSize)
         // Button setup
-        self.buttonSetup(self.spinButton, image: "Spin Button.png", target: "spinButtonAction:")
+        self.buttonSetup(self.spinButton, image: "Spin Button", target: "spinButtonAction:")
 
         self.betOneLabel = UILabel()
         self.setupGameLabel(self.betOneLabel, gameLabelText: "Bet One", color: titleColor)
