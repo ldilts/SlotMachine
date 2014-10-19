@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     var gameResultsContainer: UIView!
     var divideContainer: UIView!
     
-    var cardImageViews: [[UIImageView]] = []
+    var cardImageViews: [[Card]] = []
     
     var creditsTextView:UITextView!
     var betTextView:UITextView!
@@ -130,7 +130,7 @@ class ViewController: UIViewController {
     
     func setupCardContainer() {
         for var i:CGFloat = 0; i < kCardRows; i++ {
-            var cardImages: [UIImageView] = []
+            var cardImages: [Card] = []
             for var j:CGFloat = 0; j < kCardColumns; j++ {
                 var cardPlaceHolderImageView = UIImageView()
                 cardPlaceHolderImageView.layer.cornerRadius = 5.0
@@ -141,21 +141,31 @@ class ViewController: UIViewController {
 
                 cardPlaceHolderImageView.frame = self.setupCardFrame(i, j: j, card: cardPlaceHolderImageView)
                 
+                var gameCard = Card()
+//                var cardImageView = UIImageView()
                 
-                var cardImageView = UIImageView()
-                cardImageView.layer.cornerRadius = 5.0
-                cardImageView.layer.masksToBounds = true
-                cardImageView.layer.shadowColor = UIColor.blackColor().CGColor
-                cardImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
-                cardImageView.layer.shadowOpacity = 0.4
-                cardImageView.layer.shadowRadius = 5
+                gameCard.cardImageView.layer.cornerRadius = 5.0
+                gameCard.cardImageView.layer.masksToBounds = true
                 
-                cardImageView.frame = self.setupCardFrame(i, j: j, card: cardImageView)
+                gameCard.layer.shadowColor = UIColor.blackColor().CGColor
+                gameCard.layer.shadowOffset = CGSize(width: 0, height: 5)
+                gameCard.layer.shadowOpacity = 0.4
+                gameCard.layer.shadowRadius = 5
+//                cardImageView.layer.shadowColor = UIColor.blackColor().CGColor
+//                cardImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
+//                cardImageView.layer.shadowOpacity = 0.4
+//                cardImageView.layer.shadowRadius = 5
+                
+                gameCard.cardImageView.frame = self.setupCardFrame(i, j: j, card: gameCard.cardImageView)
 //                cardImageView.image = UIImage(named: "Ace")
                 
                 self.cardContainer.addSubview(cardPlaceHolderImageView)
-                self.cardContainer.addSubview(cardImageView)
-                cardImages.append(cardImageView)
+//                self.cardContainer.addSubview(cardImageView)
+//                cardImages.append(cardImageView)
+                 gameCard.addSubview(gameCard.cardImageView)
+                self.cardContainer.addSubview(gameCard)
+               
+                cardImages.append(gameCard)
                 
             }
             self.cardImageViews.append(cardImages)
@@ -289,7 +299,7 @@ class ViewController: UIViewController {
         if slots.count != 0 {
             for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
                 for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
-                    cardImageViews[Int(containerNumber)][Int(slotNumber)].image = slots[Int(containerNumber)][Int(slotNumber)].image
+                    cardImageViews[Int(containerNumber)][Int(slotNumber)].cardImageView.image = slots[Int(containerNumber)][Int(slotNumber)].image
                 }
             }
         } else {
@@ -339,7 +349,7 @@ class ViewController: UIViewController {
     func resetCardImages() {
         for var i:CGFloat = 0; i < kCardRows; i++ {
             for var j:CGFloat = 0; j < kCardColumns; j++ {
-                self.cardImageViews[Int(i)][Int(j)].image = UIImage(named: "Ace")
+                self.cardImageViews[Int(i)][Int(j)].cardImageView.image = UIImage(named: "Ace")
             }
         }
     }
