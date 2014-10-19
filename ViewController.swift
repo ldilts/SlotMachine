@@ -101,6 +101,10 @@ class ViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         self.navigationController?.navigationBar.setNeedsLayout
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        self.animateShowCards()
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -142,8 +146,6 @@ class ViewController: UIViewController {
                 cardPlaceHolderImageView.frame = self.setupCardFrame(i, j: j, card: cardPlaceHolderImageView)
                 
                 var gameCard = Card()
-//                var cardImageView = UIImageView()
-                
                 gameCard.cardImageView.layer.cornerRadius = 5.0
                 gameCard.cardImageView.layer.masksToBounds = true
                 
@@ -151,18 +153,12 @@ class ViewController: UIViewController {
                 gameCard.layer.shadowOffset = CGSize(width: 0, height: 5)
                 gameCard.layer.shadowOpacity = 0.4
                 gameCard.layer.shadowRadius = 5
-//                cardImageView.layer.shadowColor = UIColor.blackColor().CGColor
-//                cardImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
-//                cardImageView.layer.shadowOpacity = 0.4
-//                cardImageView.layer.shadowRadius = 5
                 
                 gameCard.cardImageView.frame = self.setupCardFrame(i, j: j, card: gameCard.cardImageView)
-//                cardImageView.image = UIImage(named: "Ace")
+                gameCard.alpha = 0.0
                 
                 self.cardContainer.addSubview(cardPlaceHolderImageView)
-//                self.cardContainer.addSubview(cardImageView)
-//                cardImages.append(cardImageView)
-                 gameCard.addSubview(gameCard.cardImageView)
+                gameCard.addSubview(gameCard.cardImageView)
                 self.cardContainer.addSubview(gameCard)
                
                 cardImages.append(gameCard)
@@ -170,8 +166,6 @@ class ViewController: UIViewController {
             }
             self.cardImageViews.append(cardImages)
         }
-        
-//        self.hardReset()
     }
     
     // Helper function for card frame setup
@@ -338,18 +332,20 @@ class ViewController: UIViewController {
     }
     
     func hardReset() {
+        self.animateHideCards()
         resetCardImages()
         credits = 50
         winnings = 0
         currentBet = 0
         
         updateMainView()
+        self.animateShowCards()
     }
     
     func resetCardImages() {
         for var i:CGFloat = 0; i < kCardRows; i++ {
             for var j:CGFloat = 0; j < kCardColumns; j++ {
-                self.cardImageViews[Int(i)][Int(j)].cardImageView.image = UIImage(named: "Ace")
+                self.cardImageViews[Int(i)][Int(j)].cardImageView.image = UIImage(named: "Card Back")
             }
         }
     }
@@ -394,22 +390,108 @@ class ViewController: UIViewController {
     }
     
     func spinButtonAction(sender:UIButton!) {
-        slots = Factory.createSlots()
-        self.shuffleCards()
-//        println("Subviews: " + "\(self.cardContainer.subviews.count)")
-        
-        var winningMultiplier = SlotBrain.computeWinnings(slots)
-        winnings = winningMultiplier * currentBet
-        credits += winnings
-        currentBet = 0
-        updateMainView()
-        
+        if currentBet == 0 {
+            self.showAlertWithText(message: "Please place a bet first")
+        } else {
+            slots = Factory.createSlots()
+            self.shuffleCards()
+            
+            var winningMultiplier = SlotBrain.computeWinnings(slots)
+            winnings = winningMultiplier * currentBet
+            credits += winnings
+            currentBet = 0
+            updateMainView()
+            self.animateCards()
+        }
     }
     
     func showAlertWithText (header : String = "Warning", message : String) {
         var alert = UIAlertController(title: header, message: message, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+        alert.view.tintColor = navigationBarColor
         self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func animateCards() {
+        for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
+            for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
+                var cardToAnimate:UIView = self.cardImageViews[Int(containerNumber)][Int(slotNumber)]
+                UIView.animateWithDuration(0.1, delay: 0.0, options: .TransitionNone, animations: {
+                    cardToAnimate.transform = CGAffineTransformMakeTranslation(5, 0)
+                    }, completion: { finished in
+                        UIView.animateWithDuration(0.1, delay: 0.0, options: .CurveEaseOut, animations: {
+                            cardToAnimate.transform = CGAffineTransformMakeTranslation(-5, 0)
+                            }, completion: { finished in
+                                UIView.animateWithDuration(0.1, delay: 0.0, options: .CurveEaseOut, animations: {
+                                    cardToAnimate.transform = CGAffineTransformMakeTranslation(0, 0)
+                                    }, completion: { finished in
+                            })
+                    })
+                })
+            }
+        }
+    }
+    
+    func animateShowCards() {
+        var row = 0;
+        for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
+            for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
+                switch slotNumber {
+                    case 0:
+                        UIView.animateWithDuration(0.3, delay: 0.3, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 1.0
+                        }, completion: { finished in
+                        })
+                    case 1:
+                        UIView.animateWithDuration(0.3, delay: 0.5, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 1.0
+                        }, completion: { finished in
+                        })
+                    case 2:
+                        UIView.animateWithDuration(0.3, delay: 0.7, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 1.0
+                        }, completion: { finished in
+                        })
+                    default:
+                        UIView.animateWithDuration(0.3, delay: 0.3, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 1.0
+                        }, completion: { finished in
+                        })
+                }
+            }
+            row++
+        }
+    }
+    
+    func animateHideCards() {
+        var row = 0;
+        for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
+            for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
+                switch slotNumber {
+                case 0:
+                    UIView.animateWithDuration(0.2, delay: 0.0, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 0.0
+                        }, completion: { finished in
+                    })
+                case 1:
+                    UIView.animateWithDuration(0.2, delay: 0.0, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 0.0
+                        }, completion: { finished in
+                    })
+                case 2:
+                    UIView.animateWithDuration(0.2, delay: 0.0, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 0.0
+                        }, completion: { finished in
+                    })
+                default:
+                    UIView.animateWithDuration(0.2, delay: 0.0, options: .TransitionNone, animations: {
+                        self.cardImageViews[Int(containerNumber)][Int(slotNumber)].alpha = 0.0
+                        }, completion: { finished in
+                    })
+                }
+            }
+            row++
+        }
     }
 }
 

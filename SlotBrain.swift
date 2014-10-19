@@ -44,13 +44,13 @@ class SlotBrain {
         
         for slotRow in slotsInRows {
             if checkFlush(slotRow) == true {
-                println("flush")
+                println("Flush")
                 winnings += 1
                 flushWinCount += 1
             }
             
             if checkThreeInARow(slotRow) {
-                println("three in a row")
+                println("Three in a row")
                 winnings += 1
                 straightWinCount += 1
             }
