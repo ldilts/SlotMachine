@@ -16,12 +16,19 @@ class ViewController: UIViewController {
     var gameResultsContainer: UIView!
     var divideContainer: UIView!
     
+    var cardImageViews: [[UIImageView]] = []
+    
     var creditsTextView:UITextView!
     var betTextView:UITextView!
     var paidTextView:UITextView!
     var creditsTitleLabel:UILabel!
     var betTitleLabel:UILabel!
     var paidTitleLabel:UILabel!
+    
+    // Stats
+    var credits = 0
+    var currentBet = 0
+    var winnings = 0
     
     var betOneButton:UIButton!
     var betMaxButton:UIButton!
@@ -31,6 +38,9 @@ class ViewController: UIViewController {
     var betMaxLabel:UILabel!
     var spinLabel:UILabel!
     
+    // Slots Array
+    var slots: [[Slot]] = []
+    
     // Making CGFloat constant 
     // k stands for constant
 
@@ -38,7 +48,6 @@ class ViewController: UIViewController {
     let kCardContainerHeight:CGFloat = 720/1136
     let kCardRows:CGFloat = 3
     let kCardColumns:CGFloat = 3
-    
     
     let kGameResultsOffsetFromEdge:CGFloat = 40/640
     let kGameResultsOffsetFromEdge2:CGFloat = 260/640
@@ -48,13 +57,11 @@ class ViewController: UIViewController {
     let kGameResultsWidth:CGFloat = 120/640
     let kGameResultsHeight:CGFloat = 50/1136
     
-    
     let kCardOffsetFromEdge:CGFloat = 40/640
     let kCardOffsetFromOtherCard:CGFloat = 55/640
     let kCardOffsetFromOtherCardTop:CGFloat = 10/1136
     let kCardWidth:CGFloat = 150/640
     let kCardHeight:CGFloat = 210/1136
-    
     
     let kNumberOfContainers = 3
     let kNumberOfSlots = 3
@@ -85,9 +92,10 @@ class ViewController: UIViewController {
         self
         
         setupContainerViews()
-        self.setupCardContainer(cardContainer)
+        self.setupCardContainer()
         self.setupGameResultsContainer()
         self.setupBottomButtonContainer()
+        self.hardReset()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -105,7 +113,6 @@ class ViewController: UIViewController {
         let statusBarHeight: CGFloat = (self.navigationController?.topLayoutGuide.length)!
         
         self.cardContainer = UIView(frame: CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: self.view.frame.width, height: self.view.frame.height * kCardContainerHeight))
-//        self.cardContainer.backgroundColor = UIColor.blueColor()
         self.view.addSubview(self.cardContainer)
         
         self.bottomButtonContainer = UIView(frame: CGRect(x: 0, y: self.view.frame.height - navigationBarHeight - statusBarHeight - (self.view.frame.height * kBottomHeight), width: self.view.frame.width, height: self.view.frame.height * kBottomHeight))
@@ -113,7 +120,6 @@ class ViewController: UIViewController {
         self.view.addSubview(self.bottomButtonContainer)
         
         self.gameResultsContainer = UIView(frame: CGRect(x: self.view.frame.origin.x, y: self.cardContainer.frame.height, width: self.view.frame.width, height: self.view.frame.height - self.cardContainer.frame.height - self.bottomButtonContainer.frame.height - navigationBarHeight - statusBarHeight))
-//        self.gameResultsContainer.backgroundColor = UIColor.blackColor()
         self.view.addSubview(self.gameResultsContainer)
         
         self.divideContainer = UIView(frame: CGRect(x: self.view.frame.origin.x, y: self.cardContainer.frame.height, width: self.view.frame.width, height: 0.5))
@@ -122,39 +128,59 @@ class ViewController: UIViewController {
         
     }
     
-    func setupCardContainer(containerView: UIView) {
+    func setupCardContainer() {
+        for var i:CGFloat = 0; i < kCardRows; i++ {
+            var cardImages: [UIImageView] = []
+            for var j:CGFloat = 0; j < kCardColumns; j++ {
+                var cardPlaceHolderImageView = UIImageView()
+                cardPlaceHolderImageView.layer.cornerRadius = 5.0
+                cardPlaceHolderImageView.layer.masksToBounds = true
+                
+                cardPlaceHolderImageView.layer.borderWidth = 0.5
+                cardPlaceHolderImageView.layer.borderColor = (navigationBarColor).CGColor
+
+                cardPlaceHolderImageView.frame = self.setupCardFrame(i, j: j, card: cardPlaceHolderImageView)
+                
+                
+                var cardImageView = UIImageView()
+                cardImageView.layer.cornerRadius = 5.0
+                cardImageView.layer.masksToBounds = true
+                cardImageView.layer.shadowColor = UIColor.blackColor().CGColor
+                cardImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
+                cardImageView.layer.shadowOpacity = 0.4
+                cardImageView.layer.shadowRadius = 5
+                
+                cardImageView.frame = self.setupCardFrame(i, j: j, card: cardImageView)
+//                cardImageView.image = UIImage(named: "Ace")
+                
+                self.cardContainer.addSubview(cardPlaceHolderImageView)
+                self.cardContainer.addSubview(cardImageView)
+                cardImages.append(cardImageView)
+                
+            }
+            self.cardImageViews.append(cardImages)
+        }
         
+//        self.hardReset()
+    }
+    
+    // Helper function for card frame setup
+    func setupCardFrame(i: CGFloat, j:CGFloat, card: UIView) -> CGRect {
         let cardWidth:CGFloat = self.view.frame.width * kCardWidth
         let cardHeight:CGFloat = self.view.frame.height * kCardHeight
         let edgeOffset:CGFloat = self.view.frame.width * kCardOffsetFromEdge
         let offsetFromOtherCard:CGFloat = self.view.frame.width * kCardOffsetFromOtherCard
         let offsetFromOtherCardTop:CGFloat = self.view.frame.height * kCardOffsetFromOtherCardTop
         
-        for var i:CGFloat = 0; i < kCardRows; i++ {
-            for var j:CGFloat = 0; j < kCardColumns; j++ {
-                var cardImageView = UIImageView()
-                cardImageView.layer.cornerRadius = 5.0
-                cardImageView.layer.masksToBounds = true
-                
-                cardImageView.layer.borderWidth = 0.5
-                cardImageView.layer.borderColor = (navigationBarColor).CGColor
-//                cardImageView.layer.shadowOffset = CGSizeMake(0, 0);
-//                cardImageView.layer.shadowOpacity = 0.8;
-//                cardImageView.layer.shadowRadius = 5.0;
-//                cardImageView.backgroundColor = UIColor.blueColor()
-
-                switch i {
-                    case 0:
-                        cardImageView.frame = CGRect(x: edgeOffset, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
-                    case 1:
-                        cardImageView.frame = CGRect(x: edgeOffset + cardWidth + offsetFromOtherCard, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
-                    case 2:
-                        cardImageView.frame = CGRect(x: edgeOffset + cardWidth + offsetFromOtherCard + cardWidth + offsetFromOtherCard, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
-                    default:
-                        cardImageView.frame = CGRect(x: 0, y: 0, width: cardWidth, height: cardHeight)
-                }
-                self.cardContainer.addSubview(cardImageView)
-            }
+        switch i {
+        case 0:
+            return CGRect(x: edgeOffset, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
+        case 1:
+            return CGRect(x: edgeOffset + cardWidth + offsetFromOtherCard, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
+        case 2:
+            return CGRect(x: edgeOffset + cardWidth + offsetFromOtherCard + cardWidth + offsetFromOtherCard, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
+        default:
+            return CGRect(x: edgeOffset, y: edgeOffset + (j * cardHeight) + (j * offsetFromOtherCardTop), width: cardWidth, height: cardHeight)
         }
     }
     
@@ -236,9 +262,6 @@ class ViewController: UIViewController {
         self.bottomButtonContainer.addSubview(self.betOneLabel)
         self.bottomButtonContainer.addSubview(self.betMaxLabel)
         self.bottomButtonContainer.addSubview(self.spinLabel)
-        
-        
-        
     }
     
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent) {
@@ -248,6 +271,7 @@ class ViewController: UIViewController {
                 preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: {(action: UIAlertAction!) in
                 // What happens when the user taps 'Ok'? That goes in here
+                self.hardReset()
             }))
             
             alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: {(action: UIAlertAction!) in
@@ -257,6 +281,19 @@ class ViewController: UIViewController {
             alert.view.tintColor = navigationBarColor
             
             self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func shuffleCards() {
+
+        if slots.count != 0 {
+            for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
+                for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
+                    cardImageViews[Int(containerNumber)][Int(slotNumber)].image = slots[Int(containerNumber)][Int(slotNumber)].image
+                }
+            }
+        } else {
+            
         }
     }
     
@@ -290,18 +327,79 @@ class ViewController: UIViewController {
         button.tintColor = titleColor
     }
     
+    func hardReset() {
+        resetCardImages()
+        credits = 50
+        winnings = 0
+        currentBet = 0
+        
+        updateMainView()
+    }
+    
+    func resetCardImages() {
+        for var i:CGFloat = 0; i < kCardRows; i++ {
+            for var j:CGFloat = 0; j < kCardColumns; j++ {
+                self.cardImageViews[Int(i)][Int(j)].image = UIImage(named: "Ace")
+            }
+        }
+    }
+    
+    func updateMainView () {
+        self.creditsTextView.text = "\(credits)"
+        self.betTextView.text = "\(currentBet)"
+        self.paidTextView.text = "\(winnings)"
+    }
+    
     func betOneButtonAction(sender:UIButton!) {
-        println("Button 1 tapped")
+        if credits <= 0 {
+            showAlertWithText(header: "No More Credits", message: "Reset Game")
+        }
+        else {
+            if currentBet < 5 {
+                currentBet += 1
+                credits -= 1
+                updateMainView()
+            }
+            else {
+                showAlertWithText(message: "You can only bet 5 credits at a time!")
+            }
+        }
     }
     
-    func betMaxButtonAction(sender:UIButton!)
-    {
-        println("Button 2 tapped")
+    func betMaxButtonAction(sender:UIButton!) {
+        if credits <= 5 {
+            showAlertWithText(header: "Not Enough Credits", message: "Bet Less")
+        }
+        else {
+            if currentBet < 5 {
+                var creditsToBetMax = 5 - currentBet
+                credits -= creditsToBetMax
+                currentBet += creditsToBetMax
+                updateMainView()
+            }
+            else {
+                showAlertWithText(message: "You can only bet 5 credits at a time!")
+            }
+        }
     }
     
-    func spinButtonAction(sender:UIButton!)
-    {
-        println("Button 3 tapped")
+    func spinButtonAction(sender:UIButton!) {
+        slots = Factory.createSlots()
+        self.shuffleCards()
+//        println("Subviews: " + "\(self.cardContainer.subviews.count)")
+        
+        var winningMultiplier = SlotBrain.computeWinnings(slots)
+        winnings = winningMultiplier * currentBet
+        credits += winnings
+        currentBet = 0
+        updateMainView()
+        
+    }
+    
+    func showAlertWithText (header : String = "Warning", message : String) {
+        var alert = UIAlertController(title: header, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+        self.presentViewController(alert, animated: true, completion: nil)
     }
 }
 
