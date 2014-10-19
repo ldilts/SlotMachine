@@ -29,6 +29,7 @@ class ViewController: UIViewController {
     var credits = 0
     var currentBet = 0
     var winnings = 0
+    var winningsDetails = ""
     
     var betOneButton:UIButton!
     var betMaxButton:UIButton!
@@ -337,6 +338,7 @@ class ViewController: UIViewController {
         credits = 50
         winnings = 0
         currentBet = 0
+        winningsDetails = ""
         
         updateMainView()
         self.animateShowCards()
@@ -353,7 +355,7 @@ class ViewController: UIViewController {
     func updateMainView () {
         self.creditsTextView.text = "\(credits)"
         self.betTextView.text = "\(currentBet)"
-        self.paidTextView.text = "\(winnings)"
+        self.paidTextView.text = self.winningsDetails + " " + "\(self.winnings)"
     }
     
     func betOneButtonAction(sender:UIButton!) {
@@ -396,7 +398,9 @@ class ViewController: UIViewController {
             slots = Factory.createSlots()
             self.shuffleCards()
             
-            var winningMultiplier = SlotBrain.computeWinnings(slots)
+            let result = SlotBrain.computeWinnings(slots)
+            var winningMultiplier = result.0
+            self.winningsDetails = result.1
             winnings = winningMultiplier * currentBet
             credits += winnings
             currentBet = 0
