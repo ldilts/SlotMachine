@@ -355,7 +355,7 @@ class ViewController: UIViewController {
     func updateMainView () {
         self.creditsTextView.text = "\(credits)"
         self.betTextView.text = "\(currentBet)"
-        self.paidTextView.text = self.winningsDetails + " " + "\(self.winnings)"
+        self.paidTextView.text = "\(self.winnings)"
     }
     
     func betOneButtonAction(sender:UIButton!) {
@@ -405,7 +405,22 @@ class ViewController: UIViewController {
             credits += winnings
             currentBet = 0
             updateMainView()
+            
+            fadeLosingCards(result.2)
+            
             self.animateCards()
+        }
+    }
+    
+    func fadeLosingCards(winningGrid:[[Bool]]) {
+        for var containerNumber:CGFloat = 0; containerNumber < kCardRows; containerNumber++ {
+            for var slotNumber:CGFloat = 0; slotNumber < kCardColumns; slotNumber++ {
+                if winningGrid[Int(containerNumber)][Int(slotNumber)] == false {
+                    self.animateFadeCards(self.cardImageViews[Int(containerNumber)][Int(slotNumber)])
+                } else {
+                    self.animateUnfadeCards(self.cardImageViews[Int(containerNumber)][Int(slotNumber)])
+                }
+            }
         }
     }
     
@@ -434,6 +449,20 @@ class ViewController: UIViewController {
                 })
             }
         }
+    }
+    
+    func animateFadeCards(card: UIView) {
+        UIView.animateWithDuration(0.3, delay: 0.3, options: .TransitionCrossDissolve, animations: {
+            card.alpha = 0.5
+            }, completion: { finished in
+        })
+    }
+    
+    func animateUnfadeCards(card: UIView) {
+        UIView.animateWithDuration(0.3, delay: 0.3, options: .TransitionCrossDissolve, animations: {
+            card.alpha = 1.0
+            }, completion: { finished in
+        })
     }
     
     func animateShowCards() {

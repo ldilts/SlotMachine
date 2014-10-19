@@ -35,36 +35,50 @@ class SlotBrain {
         return slotInRows
     }
     
-    class func computeWinnings (slots: [[Slot]]) -> (Int, String) {
+    class func computeWinnings (slots: [[Slot]]) -> (Int, String, [[Bool]]) {
         var slotsInRows = unpackSlotsIntoSlotRows(slots)
         var winnings = 0
         
         var flushWinCount = 0
         var threeOfAKindWinCount = 0
         var straightWinCount = 0
-        var result = (0, "")
+        
+        
+        var winningGrid = SlotBrain.makeWinningGrid(slots)
+        var count = 0
+        var result = (0, "", winningGrid)
         
         for slotRow in slotsInRows {
             if checkFlush(slotRow) == true {
-                result.1 = "Fl"
+                for var i = 0; i < winningGrid[count].count; i++ {
+                    winningGrid[i][count] = true
+                }
+                result.1 = "Flush"
                 println("Flush")
                 winnings += 1
                 flushWinCount += 1
             }
             
             if checkThreeInARow(slotRow) {
-                result.1 = "3R"
+                for var i = 0; i < winningGrid[count].count; i++ {
+                    winningGrid[i][count] = true
+                }
+                result.1 = "Three in a row"
                 println("Three in a row")
                 winnings += 1
                 straightWinCount += 1
             }
             
             if checkThreeOfAKind(slotRow) {
+                for var i = 0; i < winningGrid[count].count; i++ {
+                    winningGrid[i][count] = true
+                }
                 result.1 = "3K"
                 println("Three of a Kind")
                 winnings += 3
                 threeOfAKindWinCount += 1
             }
+            count++
         }
         
         if flushWinCount == 3 {
@@ -84,7 +98,12 @@ class SlotBrain {
         }
         
         result.0 = winnings
+        result.2 = winningGrid
 //        return winnings
+        if winnings == 0 {
+            println("None!")
+        }
+        println("\n")
         return result
     }
     
@@ -128,5 +147,21 @@ class SlotBrain {
         else {
             return false
         }
+    }
+    
+    class func makeWinningGrid(slots: [[Slot]]) -> [[Bool]] {
+        var winningGrid: [[Bool]] = []
+        
+        for var i = 0; i < slots.count; i++ {
+            var winnerArray:[Bool] = []
+            for var j = 0; j < slots[i].count; j++ {
+                var isWinner = false
+                winnerArray.append(isWinner)
+            }
+            winningGrid.append(winnerArray)
+        }
+        
+
+        return winningGrid
     }
 }

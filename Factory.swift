@@ -43,33 +43,33 @@ class Factory {
         var slot:Slot
         switch randomNumber {
             case 0:
-                slot = Slot(value: 1, image: UIImage(named: "Ace"), isRed: true)
+                slot = Slot(value: 1, image: UIImage(named: "Ace"), isRed: true, isWinner: false)
             case 1:
-                slot = Slot(value: 2, image: UIImage(named: "Two"), isRed: true)
+                slot = Slot(value: 2, image: UIImage(named: "Two"), isRed: true, isWinner: false)
             case 2:
-                slot = Slot(value: 3, image: UIImage(named: "Three"), isRed: true)
+                slot = Slot(value: 3, image: UIImage(named: "Three"), isRed: true, isWinner: false)
             case 3:
-                slot = Slot(value: 4, image: UIImage(named: "Four"), isRed: true)
+                slot = Slot(value: 4, image: UIImage(named: "Four"), isRed: true, isWinner: false)
             case 4:
-                slot = Slot(value: 5, image: UIImage(named: "Five"), isRed: false)
+                slot = Slot(value: 5, image: UIImage(named: "Five"), isRed: false, isWinner: false)
             case 5:
-                slot = Slot(value: 6, image: UIImage(named: "Six"), isRed: false)
+                slot = Slot(value: 6, image: UIImage(named: "Six"), isRed: false, isWinner: false)
             case 6:
-                slot = Slot(value: 7, image: UIImage(named: "Seven"), isRed: true)
+                slot = Slot(value: 7, image: UIImage(named: "Seven"), isRed: true, isWinner: false)
             case 7:
-                slot = Slot(value: 8, image: UIImage(named: "Eight"), isRed: false)
+                slot = Slot(value: 8, image: UIImage(named: "Eight"), isRed: false, isWinner: false)
             case 8:
-                slot = Slot(value: 9, image: UIImage(named: "Nine"), isRed: false)
+                slot = Slot(value: 9, image: UIImage(named: "Nine"), isRed: false, isWinner: false)
             case 9:
-                slot = Slot(value: 10, image: UIImage(named: "Ten"), isRed: true)
+                slot = Slot(value: 10, image: UIImage(named: "Ten"), isRed: true, isWinner: false)
             case 10:
-                slot = Slot(value: 11, image: UIImage(named: "Jack"), isRed: false)
+                slot = Slot(value: 11, image: UIImage(named: "Jack"), isRed: false, isWinner: false)
             case 11:
-                slot = Slot(value: 12, image: UIImage(named: "Queen"), isRed: false)
+                slot = Slot(value: 12, image: UIImage(named: "Queen"), isRed: false, isWinner: false)
             case 12:
-                slot = Slot(value: 13, image: UIImage(named: "King"), isRed: true)
+                slot = Slot(value: 13, image: UIImage(named: "King"), isRed: true, isWinner: false)
             default:
-                slot = Slot(value: 0, image: UIImage(named: "Ace"), isRed: true)
+                slot = Slot(value: 0, image: UIImage(named: "Ace"), isRed: true, isWinner: false)
         }
         return slot
     }
