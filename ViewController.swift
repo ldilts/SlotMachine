@@ -86,8 +86,11 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         self.title = "Super Slots"
-        let titleDict: NSDictionary = [NSForegroundColorAttributeName: titleColor, NSFontAttributeName: UIFont(name: "Streetwear", size: 24)]
-        self.navigationController?.navigationBar.titleTextAttributes = titleDict
+        var attributes = [
+            NSForegroundColorAttributeName: titleColor,
+            NSFontAttributeName: UIFont(name: "Streetwear", size: 24)!
+        ]
+        self.navigationController?.navigationBar.titleTextAttributes = attributes
         
         self.view.backgroundColor = backgroundColor
         self

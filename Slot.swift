@@ -14,5 +14,5 @@ struct Slot {
     var image = UIImage(named: "Ace")
     var isRed = true
     //  Flag whether the card is part of a winning hand
-    var isWinner = false
+//    var isWinner = false
 }
